@@ -1,113 +1,150 @@
-import Image from "next/image";
-
+"use client";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export default function Home() {
+  function handleInput(event) {
+    const newObj = { ...data, [event.target.name]: event.target.value };
+    setData(newObj);
+  }
+  const [data, setData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    detail: "",
+  });
+  const [error, setError] = useState({});
+  function validate() {
+    const error = {};
+    if (data.firstname === "") {
+      error.firstname = "Please enter your firstname";
+    }
+    if (data.lastname === "") {
+      error.lastname = "Please enter your lastname";
+    }
+    if (data.email === "" || data.phone === "") {
+      if (data.email === "" && data.phone === "") {
+        error.email = "Please enter atleast one of email of phone number";
+      }
+      if (data.phone === "" && data.email === "") {
+        error.phone = "Please enter atleast one of email of phone number";
+      }
+    }
+    if (data.detail === "") {
+      error.detail = "Please enter your detail";
+    }
+    if (
+      data.email &&
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)
+    ) {
+      error.email = "Invalid email address";
+    }
+    if (
+      data.phone &&
+      !/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(
+        data.phone
+      )
+    ) {
+      error.phone = "Invalid phone number";
+    }
+    if (data.detail.length > 1000) {
+      error.detail = "Please enter less than 1000 characters";
+    }
+    return error;
+  }
+  function handleSubmit(e) {
+    e.preventDefault();
+    const error = validate();
+
+    setError(error);
+    if (Object.keys(error).length === 0) {
+      setError({});
+      toast.success("Submit successfully", {
+        position: "top-right",
+        autoClose: 900,
+        hideProgressBar: true,
+        style: {
+          backgroundColor: "#D0E7D2",
+          color: "#2B2B2B",
+          padding: "16px 6px",
+        },
+      });
+      console.log("Toast triggered!");
+      console.log(data);
+      setData({
+        firstname: "",
+        lastname: "",
+        email: "",
+        phone: "",
+        detail: "",
+      });
+    }
+  }
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <main className="flex min-h-screen min-w-screen flex-col items-center justify-between p-6 gap-4">
+      <h1 className="text-3xl font-bold"> Complain form</h1>
+      <div className="z-10 max-w-5xl w-full items-center justify-center font-mono text-sm ">
+        <form className="flex flex-col gap-4 min-w-64 " onSubmit={handleSubmit}>
+          <lebel htmlFor="firstname">Firstname</lebel>
+          <input
+            type="text"
+            id="firstname"
+            name="firstname"
+            className=" text-black p-2"
+            placeholder="Firstname"
+            value={data.firstname}
+            onChange={handleInput}
+          />
+          <span className="text-red-500">{error.firstname}</span>
+          <lebel htmlFor="lastname">Lastname</lebel>
+          <input
+            type="text"
+            id="lastname"
+            name="lastname"
+            className=" text-black p-2 "
+            placeholder="Lastname"
+            value={data.lastname}
+            onChange={handleInput}
+          />
+          <span className="text-red-500">{error.lastname}</span>
+          <lebel htmlFor="email">Email</lebel>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            className=" text-black p-2 "
+            placeholder="example@mail.com"
+            value={data.email}
+            onChange={handleInput}
+          />
+          <span className="text-red-500">{error.email}</span>
+          <lebel htmlFor="phone">Phone Number</lebel>
+          <input
+            type="text"
+            id="phone"
+            name="phone"
+            className=" text-black p-2 "
+            placeholder="Phone Number"
+            value={data.phone}
+            onChange={handleInput}
+          />
+          <span className="text-red-500">{error.phone}</span>
+          <lebel htmlFor="detail">Complain Detail</lebel>
+          <textarea
+            rows={20}
+            type="text"
+            name="detail"
+            id="detail"
+            className="text-black p-2 h-60"
+            value={data.detail}
+            onChange={handleInput}
+          />
+          <span className="text-red-500">{error.detail}</span>
+          <button className="bg-blue-500 rounded-xl p-2">submit</button>
+        </form>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      <ToastContainer />
     </main>
   );
 }
