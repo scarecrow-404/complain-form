@@ -18,17 +18,17 @@ export default function Home() {
   function validate() {
     const error = {};
     if (data.firstname === "") {
-      error.firstname = "Please enter your firstname";
+      error.firstname = "Please enter your first name";
     }
     if (data.lastname === "") {
-      error.lastname = "Please enter your lastname";
+      error.lastname = "Please enter your last name";
     }
     if (data.email === "" || data.phone === "") {
       if (data.email === "" && data.phone === "") {
-        error.email = "Please enter atleast one of email of phone number";
+        error.email = "Please enter at least one of email or phone number";
       }
       if (data.phone === "" && data.email === "") {
-        error.phone = "Please enter atleast one of email of phone number";
+        error.phone = "Please enter at least one of email or phone number";
       }
     }
     if (data.detail === "") {
